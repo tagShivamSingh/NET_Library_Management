@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <PackageTags>library, package, client-side</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>The contracts assembly for authoring Library Manager extensions</Description>
+    <PackageId>Microsoft.Web.LibraryManager.Contracts</PackageId>
+  </PropertyGroup>
+
+  <Target Name="BuiltProjectOutputGroup" />
+  <Target Name="BuiltProjectOutputGroupDependencies" />
+  <Target Name="GetCopyToOutputDirectoryItems" />
+  <Target Name="SatelliteDllsProjectOutputGroup" />
+  <Target Name="DebugSymbolsProjectOutputGroup" />
+  <ItemGroup Condition="'$(TargetFramework)'=='net472'">
+    <Reference Include="System.Runtime" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\Text.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Text.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Text.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!-- The WinFX target SatelliteDllsProjectOutputGroup does not set the FinalOutputPath metadata, so we end up
+        signing these files in their projects' $(IntermedateOutputPath), but then we include the usnigned copies
+        in the package from their $(OutputPath). -->
+  <Target Name="FixWinFXSatelliteDllsProjectOutputGroup"
+          AfterTargets="SatelliteDllsProjectOutputGroup"
+          Condition="'$(TargetFramework)'=='net472'">
+    <ItemGroup>
+      <SatelliteDllsProjectOutputGroupOutput Condition="'%(SatelliteDllsProjectOutputGroupOutput.FinalOutputPath)'==''">
+        <FinalOutputPath>$(TargetDir)%(SatelliteDllsProjectOutputGroupOutput.TargetPath)</FinalOutputPath>
+      </SatelliteDllsProjectOutputGroupOutput>
+    </ItemGroup>
+  </Target>
+
+  <!-- The resource assemblies from this project are consumed by different projects both from bin/ and obj/
+       so sign the files in both locations to ensure consuming projects can pick up a signed copy. -->
+  <Target Name="SignBinAndObjResourceAssemblies"
+          AfterTargets="SatelliteDllsProjectOutputGroup">
+    <!-- The Microbuild targets will add the FinalOutputPath (bin) as a sign item for each of these files.
+         So we'll add the Identity (obj) here.  See CollectFilesToSign target for details.  -->
+    <ItemGroup>
+      <_SatelliteDllsProjectOutputGroupOutputFinalOutputPath
+        Include="@(SatelliteDllsProjectOutputGroupOutput->'%(Identity)')"
+        Condition=" '%(SatelliteDllsProjectOutputGroupOutput.FinalOutputPath)' != '' " />
+    </ItemGroup>
+  </Target>
+</Project>

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>Microsoft.Web.LibraryManager.Tools</RootNamespace>
+    <PackAsTool>true</PackAsTool>
+    <PackAsToolShimRuntimeIdentifiers>win-x64;win-x86;osx-x64</PackAsToolShimRuntimeIdentifiers>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Microsoft.Web.LibraryManager.Cli</PackageId>
+    <Description>Command line tool for Library Manager</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Runtime" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.CommandLineUtils.Sources" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LibraryManager\Microsoft.Web.LibraryManager.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\Text.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Text.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Text.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <Target Name="AdditionalPublishedFilesToSign" AfterTargets="CopyFilesToPublishDirectory">
+    <!-- For NuGet packaging, files get put in $(PublishDir) and should be signed there instead of $(OutputDir) -->
+    <!-- Also note, it uses @(PublishedFilesToSign) instead of @(FilesToSign).  See target SignPublishedFiles -->
+    <ItemGroup>
+      <PublishedFilesToSign Include="$(PublishDir)\Minimatch.dll">
+        <Authenticode>3PartySHA2</Authenticode>
+      </PublishedFilesToSign>
+      <PublishedFilesToSign Include="$(PublishDir)\Newtonsoft.Json.dll">
+        <Authenticode>3PartySHA2</Authenticode>
+      </PublishedFilesToSign>
+      <PublishedFilesToSign Include="$(PublishDir)\**\libman.resources.dll" />
+      <PublishedFilesToSign Include="$(PublishDir)\shims\win-*\libman.exe" />
+    </ItemGroup>
+  </Target>
+</Project>

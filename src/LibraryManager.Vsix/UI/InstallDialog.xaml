@@ -1,0 +1,198 @@
+﻿<ui:ThemedWindow x:Class="Microsoft.Web.LibraryManager.Vsix.UI.InstallDialog"
+                 x:ClassModifier="internal"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:resources="clr-namespace:Microsoft.Web.LibraryManager.Vsix.Resources"
+                 xmlns:controls="clr-namespace:Microsoft.Web.LibraryManager.Vsix.UI.Controls"
+                 xmlns:converters="clr-namespace:Microsoft.Web.LibraryManager.Vsix.UI.Converters"
+                 xmlns:extensions="clr-namespace:Microsoft.Web.LibraryManager.Vsix.UI.Extensions"
+                 xmlns:models="clr-namespace:Microsoft.Web.LibraryManager.Vsix.UI.Models"
+                 xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+                 xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+                 mc:Ignorable="d" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=models:InstallDialogViewModel}"
+                 xmlns:ui="clr-namespace:Microsoft.Web.LibraryManager.Vsix.UI.Theming"
+                 Title="{x:Static resources:Text.AddClientSideLibrary}"
+                 Height="350" Width="500"
+                 ShowInTaskbar="False"
+                 ResizeMode="CanResizeWithGrip"
+                 WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+        <converters:HintTextConverter x:Key="HintTextConverter"/>
+    </Window.Resources>
+    <Grid Margin="8, 12, 12, 12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Grid.ColumnSpan="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="76*" />
+                <ColumnDefinition Width="391*" />
+            </Grid.ColumnDefinitions>
+            <Label Name="Provider"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Target="{Binding ElementName=ProviderComboBox}">
+                <AccessText Text="{x:Static resources:Text.Provider}" />
+            </Label>
+            <Label Name="LibraryId"
+                   Grid.Row="1"
+                   Grid.Column="0"
+                   Target="{Binding ElementName=LibrarySearchBox}">
+                <AccessText Text="{x:Static resources:Text.Library}" />
+            </Label>
+            <ComboBox x:Name="ProviderComboBox"
+                      AutomationProperties.Name="{extensions:RemoveCharacter {x:Static resources:Text.Provider}, _}"
+                      Grid.Row="0"
+                      Grid.Column="1"
+                      Margin="0 0 0 9"
+                      DisplayMemberPath="Id"
+                      SelectedItem="{Binding SelectedProvider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectionChanged="ProviderComboBox_SelectionChanged"
+                      ItemsSource="{Binding Providers}"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Width="auto">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="AutomationProperties.Name" Value="{Binding Id}"/>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
+            <DockPanel Grid.Row="1"
+                       Grid.Column="1"
+                       KeyboardNavigation.TabNavigation="Local"
+                       Focusable="False"
+                       LastChildFill="True"
+                       Margin="0 0 0 9">
+                <imaging:CrispImage Width="13"
+                                    Height="13"
+                                    Margin="6 0 0 0"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    DockPanel.Dock="Right"
+                                    Focusable="True"
+                                    AutomationProperties.Name="{Binding Converter={StaticResource HintTextConverter}}"
+                                    DataContext="{Binding ElementName=ProviderComboBox, Path=SelectedItem}"
+                                    KeyboardNavigation.TabIndex="2"
+                                    Moniker="{x:Static catalog:KnownMonikers.StatusInformationNoColor}">
+                    <imaging:CrispImage.ToolTip>
+                        <ToolTip>
+                            <Label Content="{Binding Converter={StaticResource HintTextConverter}}" />
+                        </ToolTip>
+                    </imaging:CrispImage.ToolTip>
+                </imaging:CrispImage>
+                <controls:TextBoxWithSearch x:Name="LibrarySearchBox"
+                                  AutomationProperties.Name="{x:Static resources:Text.Library}"
+                                  DockPanel.Dock="Left"
+                                  KeyboardNavigation.TabNavigation="Local"
+                                  KeyboardNavigation.TabIndex="1"
+                                  DataContext="{Binding LibraryIdViewModel}" />
+            </DockPanel>
+        </Grid>
+
+        <StackPanel Orientation="Vertical"
+                    Grid.Row="1"
+                    Grid.ColumnSpan="4"
+                    Margin="0 0 0 9">
+            <RadioButton x:Name="IncludeAllLibraryFilesRb"
+                         Margin="4 0 0 9"
+                         GroupName="FilesToInstall"
+                         Content="{x:Static resources:Text.IncludeAllLibraryFiles}"
+                         IsChecked="{Binding LibraryFilesToInstall,
+                                             Mode=TwoWay,
+                                             Converter={StaticResource EnumToBoolConverter},
+                                             ConverterParameter=InstallAllLibraryFiles}" />
+            <RadioButton Content="{x:Static resources:Text.ChooseSpecificFiles}"
+                         Margin="4 0 0 0"
+                         GroupName="FilesToInstall"
+                         IsChecked="{Binding LibraryFilesToInstall,
+                                             Mode=TwoWay,
+                                             Converter={StaticResource EnumToBoolConverter},
+                                             ConverterParameter=ChooseSpecificFilesToInstall}" />
+        </StackPanel>
+
+        <Border Grid.Row="2"
+                Grid.ColumnSpan="4"
+                Margin="6 0 0 9"
+                Style="{StaticResource GroupBoxBorderStyle}"
+                BorderThickness="1"
+                KeyboardNavigation.TabNavigation="Once">
+            <controls:PackageContentsTreeView x:Name="LibraryFilesToInstallTreeView"
+                                              AutomationProperties.Name="{x:Static resources:Text.Files}" />
+        </Border>
+
+        <Label Grid.Row="2"
+               Grid.ColumnSpan="4"
+               Margin="0 0 0 9"
+               Opacity=".5"
+               VerticalAlignment="Center"
+               Name="ChooseLibraryFilesToInstallLabel"
+               HorizontalAlignment="Center">
+            <Label.Style>
+                <Style TargetType="Label" BasedOn="{StaticResource ThemedLabelStyle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsTreeViewEmpty}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=IsTreeViewEmpty}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Label.Style>
+            <TextBlock Text="{x:Static resources:Text.SelectLibraryToSelectFilesToInstall}" />
+        </Label>
+
+        <DockPanel Grid.Row="3"
+                   Grid.ColumnSpan="4"
+                   Margin="0 0 0 9">
+            <Label Name="TargetLocation"
+                   Target="{Binding ElementName=DestinationFolder}"
+                   Width="Auto">
+                <AccessText Text="{x:Static resources:Text.TargetLocation}" />
+            </Label>
+            <controls:TextBoxWithSearch x:Name="DestinationFolder"
+                                     AutomationProperties.Name="{x:Static resources:Text.TargetLocation}"
+                                     VerticalAlignment="Center"
+                                     DataContext="{Binding TargetLocationViewModel}" />
+        </DockPanel>
+
+        <DockPanel Grid.Row="4"
+                   Grid.ColumnSpan="4"
+                   LastChildFill="False">
+            <Button Content="{x:Static resources:Text.Cancel}"
+                    Width="65"
+                    DockPanel.Dock="Right"
+                    IsCancel="True"
+                    KeyboardNavigation.TabIndex="2" />
+            <Button Content="{x:Static resources:Text.Install}"
+                    Name="InstallButton"
+                    Width="65"
+                    DockPanel.Dock="Right"
+                    Margin="0 0 6 0"
+                    IsDefault="True"
+                    Click="InstallButton_Clicked"
+                    IsEnabled="{Binding ElementName=DestinationFolder, Path=Text.Length}"
+                    KeyboardNavigation.TabIndex="1" />
+        </DockPanel>
+    </Grid>
+</ui:ThemedWindow>

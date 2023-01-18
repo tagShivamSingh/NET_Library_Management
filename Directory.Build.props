@@ -1,0 +1,32 @@
+<Project>
+  <PropertyGroup>
+    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+    <MicroBuild_DoNotStrongNameSign>true</MicroBuild_DoNotStrongNameSign>
+    <BaseOutputPath>$(RepoRoot)\bin\$(MSBuildProjectName)</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(RepoRoot)\obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+    <ManifestOutputPath>$(RepoRoot)\bin\Microsoft.Web.LibraryManager.Vsix\$(Configuration)</ManifestOutputPath>
+
+    <Authors>Microsoft</Authors>
+    <Company>Microsoft Corp.</Company>
+    <Description>Create custom providers for the Visual Studio Library Manager</Description>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+
+    <Product>Microsoft.Web.LibraryManager</Product>
+    <PackageProjectUrl>https://github.com/aspnet/LibraryManager</PackageProjectUrl>
+    <PackageIcon>PackageIcon.png</PackageIcon>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/aspnet/LibraryManager</RepositoryUrl>
+    <PackageOutputPath>$(RepoRoot)\artifacts\$(Configuration)</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)\License.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
+    <None Include="$(MSBuildThisFileDirectory)\src\PackageIcon.png" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Internal.MicroBuild" PrivateAssets="All" />
+    <PackageReference Include="NerdBank.GitVersioning" PrivateAssets="All" />
+  </ItemGroup>
+</Project>

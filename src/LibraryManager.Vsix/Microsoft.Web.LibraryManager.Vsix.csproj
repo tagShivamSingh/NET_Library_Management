@@ -1,0 +1,451 @@
+﻿<Project ToolsDefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\..\LibraryManager.Settings.targets" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <UseCodebase>true</UseCodebase>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(DevEnvDir)\devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix Exp</StartArguments>
+    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{EDA2179C-D952-449F-9A3D-8B3A152D6E5A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <OutputPath>$(BaseOutputPath)\$(Configuration)</OutputPath>
+    <RootNamespace>Microsoft.Web.LibraryManager.Vsix</RootNamespace>
+    <AssemblyName>Microsoft.Web.LibraryManager.Vsix</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <TargetVsixContainerName>Microsoft.Web.LibraryManager.vsix</TargetVsixContainerName>
+    <ExtensionInstallationRoot>Extensions</ExtensionInstallationRoot>
+    <ExtensionInstallationFolder>Microsoft\Web Tools\Library Manager</ExtensionInstallationFolder>
+    <!-- IsProductComponent should always be true, as the component ships in VS -->
+    <IsProductComponent>true</IsProductComponent>
+    <SetupProductArch>neutral</SetupProductArch>
+    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>true</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <!-- Live Unit Testing workarounds -->
+    <CreateVsixContainer Condition="'$(BuildingForLiveUnitTesting)' == 'true'">false</CreateVsixContainer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>TRACE;DEBUG;UI_ENABLED</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Commands\InstallLibraryCommand.cs" />
+    <Compile Include="Contracts\DependenciesFactory.cs" />
+    <Compile Include="Contracts\IDependenciesFactory.cs" />
+    <Compile Include="Search\ISearchService.cs" />
+    <Compile Include="Search\LocationSearchService.cs" />
+    <Compile Include="Search\ProviderCatalogSearchService.cs" />
+    <Compile Include="Shared\DefaultSolutionEvents.cs" />
+    <Compile Include="UI\Converters\CheckBoxAutomationNameConverter.cs" />
+    <Compile Include="UI\Converters\WatermarkVisibilityConverter.cs" />
+    <Compile Include="UI\Extensions\RemoveCharacterExtension.cs" />
+    <Compile Include="UI\InstallDialogProvider.cs" />
+    <Compile Include="UI\Controls\BindingProxy.cs" />
+    <Compile Include="UI\Models\LibraryNameBinding.cs" />
+    <Compile Include="UI\Controls\PackageContentsTreeView.xaml.cs">
+      <DependentUpon>PackageContentsTreeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\PackageContentsTreeViewAutomationPeer.cs" />
+    <Compile Include="UI\Controls\Search\LogicalOrConverter.cs" />
+    <Compile Include="UI\Controls\Search\Wrapper.cs" />
+    <Compile Include="UI\Controls\TextBoxWithSearch.xaml.cs">
+      <DependentUpon>TextBoxWithSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\AutomationPeers\TextControlTypeAutomationPeer.cs" />
+    <Compile Include="UI\Theming\ThemedWindow.cs" />
+    <Compile Include="UI\Converters\BoldingConverter.cs" />
+    <Compile Include="UI\Converters\NotConverter.cs" />
+    <Compile Include="UI\Converters\VisibleIfNonNullConverter.cs" />
+    <Compile Include="UI\IInstallDialog.cs" />
+    <Compile Include="UI\InstallDialog.xaml.cs">
+      <DependentUpon>InstallDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Models\ActionCommand.cs" />
+    <Compile Include="UI\Models\BindableBase.cs" />
+    <Compile Include="UI\Models\InstallDialogViewModel.cs" />
+    <Compile Include="UI\Models\LibraryIdViewModel.cs" />
+    <Compile Include="UI\Models\PackageItem.cs" />
+    <Compile Include="UI\Models\PackageItemType.cs" />
+    <Compile Include="UI\Models\SearchTextBoxViewModel.cs" />
+    <Compile Include="UI\Models\SelectedProviderBinding.cs" />
+    <Compile Include="UI\Models\TargetLocationViewModel.cs" />
+    <Compile Include="UI\Theming\Theme.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\ManageLibrariesCommand.cs" />
+    <Compile Include="Commands\RestoreOnBuildCommand.cs" />
+    <Compile Include="Commands\RestoreSolutionCommand.cs" />
+    <Compile Include="Commands\RestoreCommand.cs" />
+    <Compile Include="Commands\CleanCommand.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Contracts\Dependencies.cs" />
+    <Compile Include="Contracts\HostInteraction.cs" />
+    <Compile Include="Contracts\Logger.cs" />
+    <Compile Include="Contracts\PerProjectLogger.cs" />
+    <Compile Include="ErrorList\DisplayError.cs" />
+    <Compile Include="ErrorList\ErrorListPropagator.cs" />
+    <Compile Include="ErrorList\SinkManager.cs" />
+    <Compile Include="ErrorList\TableDataSource.cs" />
+    <Compile Include="ErrorList\TableEntriesSnapshot.cs" />
+    <Compile Include="Json\Completion\CompletionElementProvider.cs" />
+    <Compile Include="Json\Completion\PathCompletionProvider.cs" />
+    <Compile Include="Json\Completion\ProviderCompletionProvider.cs" />
+    <Compile Include="Json\Completion\CompletionController.cs" />
+    <Compile Include="Json\JsonHelpers.cs" />
+    <Compile Include="Json\SuggestedActions\UpdateSuggestedAction.cs" />
+    <Compile Include="Json\SuggestedActions\UpdateSuggestedActionSet.cs" />
+    <Compile Include="Json\SuggestedActions\UninstallSuggestedActions.cs" />
+    <Compile Include="Json\SuggestedActions\SuggestedActionProvider.cs" />
+    <Compile Include="UI\Converters\EnumToBoolConverter.cs" />
+    <Compile Include="UI\Converters\HintTextConverter.cs" />
+    <Compile Include="Shared\ILibraryCommandService.cs" />
+    <Compile Include="Shared\ITaskStatusCenterService.cs" />
+    <Compile Include="Shared\TaskStatusCenterService.cs" />
+    <Compile Include="Shared\Telemetry.cs" />
+    <Compile Include="Json\Completion\BaseCompletionProvider.cs" />
+    <Compile Include="Json\Completion\FilesCompletionProvider.cs" />
+    <Compile Include="Json\Completion\LibraryIdCompletionProvider.cs" />
+    <Compile Include="Json\Completion\VersionCompletionEntry.cs" />
+    <Compile Include="Json\Completion\SimpleCompletionEntry.cs" />
+    <Compile Include="UI\Controls\CompletionEntry.cs" />
+    <Compile Include="UI\Controls\EditorTooltip.xaml.cs">
+      <DependentUpon>EditorTooltip.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Shared\LibraryCommandService.cs" />
+    <Compile Include="Shared\VsHelpers.cs" />
+    <Compile Include="Json\TextviewCreationListener.cs" />
+    <Compile Include="LibraryManagerPackage.cs" />
+    <Compile Include="Resources\Text.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Text.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\CommandTable\VSCommandTable.en.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VSCommandTable.en.vsct</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="source.extension.cs">
+      <DependentUpon>source.extension.vsixmanifest</DependentUpon>
+    </Compile>
+    <Compile Include="Shared\WpfUtil.cs" />
+    <Compile Include="UI\Models\FileSelection.cs" />
+    <Compile Include="UI\Models\FileSelectionType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+      <Generator>VsixManifestGenerator</Generator>
+      <LastGenOutput>source.extension.en.resx</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="..\..\lib\Microsoft.WebTools.Languages.Css.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="..\..\lib\Microsoft.WebTools.Languages.Json.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="..\..\lib\Microsoft.WebTools.Languages.Json.Editor.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="..\..\lib\Microsoft.WebTools.Languages.Json.VS.dll">
+      <Private>False</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="..\..\lib\Microsoft.WebTools.Languages.Shared.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="..\..\lib\Microsoft.WebTools.Languages.Shared.Editor.dll">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Editor" />
+    <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Telemetry" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="all" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Nuget.VisualStudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.en.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+      <Generator>VsctGenerator</Generator>
+      <LastGenOutput>VSCommandTable.en.cs</LastGenOutput>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.cs.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.es.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.fr.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.it.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.ja.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.ko.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.pl.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.pt-BR.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.ru.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.tr.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.zh-Hans.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.zh-Hant.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <VSCTCompile Include="Commands\CommandTable\VSCommandTable.de.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\LICENSE.txt">
+      <Link>Resources\LICENSE.txt</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icon.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="source.extension.ico">
+      <DependentUpon>source.extension.vsixmanifest</DependentUpon>
+    </Content>
+    <EmbeddedResource Include="Resources\Text.cs.resx" />
+    <EmbeddedResource Include="Resources\Text.de.resx" />
+    <EmbeddedResource Include="Resources\Text.es.resx" />
+    <EmbeddedResource Include="Resources\Text.fr.resx" />
+    <EmbeddedResource Include="Resources\Text.it.resx" />
+    <EmbeddedResource Include="Resources\Text.ja.resx" />
+    <EmbeddedResource Include="Resources\Text.ko.resx" />
+    <EmbeddedResource Include="Resources\Text.pl.resx" />
+    <EmbeddedResource Include="Resources\Text.pt-BR.resx" />
+    <EmbeddedResource Include="Resources\Text.ru.resx" />
+    <EmbeddedResource Include="Resources\Text.tr.resx" />
+    <EmbeddedResource Include="Resources\Text.zh-Hans.resx" />
+    <EmbeddedResource Include="Resources\Text.zh-Hant.resx" />
+    <EmbeddedResource Include="source.extension.cs.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.cs.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.de.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.de.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.es.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.es.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.fr.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.fr.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.it.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.it.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.ja.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.ja.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.ko.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.ko.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.pl.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.pl.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.pt-BR.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.pt-BR.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.ru.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.ru.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.tr.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.tr.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.zh-Hans.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.zh-Hans.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.zh-Hant.resx">
+      <DependentUpon>source.extension.cs</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <LogicalName>VSPackage.zh-Hant.Resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source.extension.en.resx">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>source.extension.vsixmanifest</DependentUpon>
+      <MergeWithCTO>true</MergeWithCTO>
+      <!--<ManifestResourceName>VSPackage.en</ManifestResourceName>-->
+      <LogicalName>VSPackage.en.Resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Text.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Text.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LibraryManager.Contracts\Microsoft.Web.LibraryManager.Contracts.csproj">
+      <Project>{ff466454-426b-4ad7-8b00-d50011be716f}</Project>
+      <Name>Microsoft.Web.LibraryManager.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LibraryManager\Microsoft.Web.LibraryManager.csproj">
+      <Project>{707356dd-96b9-49f6-af2a-9d23b857a1e2}</Project>
+      <Name>Microsoft.Web.LibraryManager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\Controls\EditorTooltip.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\PackageContentsTreeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Theming\Shared.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TextBoxWithSearch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Theming\VsThemedComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Theming\VsThemedTreeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Theming\VsThemedToolTip.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\InstallDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Commands\CommandTable\LocalizationFiles\VSCommandTable.*.xlf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ThirdPartyAssemblies Include="$(OutputPath)\MessagePack.dll" />
+    <ThirdPartyAssemblies Include="$(OutputPath)\MessagePack.Annotations.dll" />
+    <ThirdPartyAssemblies Include="$(OutputPath)\Minimatch.dll" />
+    <ThirdPartyAssemblies Include="$(OutputPath)\Nerdbank.Streams.dll" />
+    <FilesToSign Include="@(ThirdPartyAssemblies)">
+      <Authenticode>3PartySHA2</Authenticode>
+    </FilesToSign>
+  </ItemGroup>
+  <Target Name="PreCreateVsixContainer" BeforeTargets="CreateVsixContainer">
+    <ItemGroup>
+      <VSIXSourceItem Include="$(OutputPath)%(DstLocales.Identity)\Microsoft.Web.LibraryManager.resources.dll" Condition="Exists('$(OutputPath)\%(DstLocales.Identity)\Microsoft.Web.LibraryManager.resources.dll')">
+        <VSIXSubPath>%(DstLocales.Identity)</VSIXSubPath>
+      </VSIXSourceItem>
+      <VSIXSourceItem Include="$(OutputPath)\%(DstLocales.Identity)\Microsoft.Web.LibraryManager.Contracts.resources.dll" Condition="Exists('$(OutputPath)\%(DstLocales.Identity)\Microsoft.Web.LibraryManager.Contracts.resources.dll')">
+        <VSIXSubPath>%(DstLocales.Identity)</VSIXSubPath>
+      </VSIXSourceItem>
+    </ItemGroup>
+  </Target>
+  <!-- This is a copy of the Microsoft.VisualStudio.SDK.EmbedInteropTypes NuGet package, but only the list of
+       assemblies that we need. The package includes things like EnvDTE which are reasonable for consumers, but
+       strange since we actually _implement_ DTE and use it as an exchange type with generics in a few places. -->
+  <Target Name="LinkVSSDKEmbeddableAssemblies" DependsOnTargets="ResolveReferences" AfterTargets="ResolveReferences">
+    <ItemGroup>
+      <ReferencePath Condition="&#xD;&#xA;              '%(FileName)' == 'Microsoft.VisualStudio.Shell.Interop.10.0'&#xD;&#xA;              or '%(FileName)' == 'Microsoft.VisualStudio.Shell.Interop.11.0'&#xD;&#xA;              ">
+        <EmbedInteropTypes>false</EmbedInteropTypes>
+      </ReferencePath>
+    </ItemGroup>
+    <ItemGroup>
+      <ReferencePath Condition="&#xD;&#xA;              '%(FileName)' == 'Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime'&#xD;&#xA;              or '%(FileName)' == 'Microsoft.VisualStudio.Shell.Interop.12.0'&#xD;&#xA;              or '%(FileName)' == 'Microsoft.VisualStudio.Shell.Interop.14.0.DesignTime'&#xD;&#xA;              or '%(FileName)' == 'Nuget.VisualStudio'&#xD;&#xA;              ">
+        <EmbedInteropTypes>true</EmbedInteropTypes>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VsSDKInstall)\Microsoft.VsSDK.targets" Condition="Exists('$(VsSDKInstall)\Microsoft.VsSDK.targets')" />
+
+  <Target Name="ResolveNuGetVsixSourceItemFromOutputPath" AfterTargets="GetVsixSourceItems">
+    <ItemGroup>
+      <_VsixSourceItemsFromNuGet Include="@(VSIXSourceItem)"
+                                 Condition="'%(VSIXSourceItem.NuGetSourceType)' == 'Package'">
+      </_VsixSourceItemsFromNuGet>
+      <!-- Replace the existing VSIX source items as they are picked up before any signing can occur on them -->
+      <VSIXSourceItem Remove="@(_VsixSourceItemsFromNuGet)" />
+      <VSIXSourceItem Include="$(OutputPath)\%(_VsixSourceItemsFromNuGet.FileName)%(_VsixSourceItemsFromNuGet.Extension)"
+                      Condition="Exists('$(OutputPath)\%(_VsixSourceItemsFromNuGet.FileName)%(_VsixSourceItemsFromNuGet.Extension)')" />
+    </ItemGroup>
+  </Target>
+
+</Project>

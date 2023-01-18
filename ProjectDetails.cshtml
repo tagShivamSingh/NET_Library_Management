@@ -1,0 +1,595 @@
+﻿@model ValidatorWeb.Models.DashboardModel
+@{
+    ViewBag.Title = "ProjectDetails";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+@section CssForThisPage{
+
+}
+
+@if (ViewBag.Type == "Project")
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0 font-size-18">Project Listing</h4>
+            </div>
+        </div>
+    </div>
+    @*<div id="divheaderdesign">
+
+            <h3 class="page-header" id="h2header" style=" margin-bottom: 12px; font-size: 20px; color: #333333;">
+                <span>Project Listing</span>
+            </h3>
+
+        </div>*@
+    <div class="row">
+        <div class="col-12">
+            @Html.Partial("_PartialProjectListGrid", Model)
+        </div>
+    </div>
+
+}
+
+@*<div class="" style="display:none;">
+        <div class="col-sm-12 col-lg-12 col-md-12">
+            <ul class="nav nav-tabs dep_tabs">
+                <li class="active"><a data-toggle="tab" href="#adt"><img src="~/img/app_dep.png" />&nbsp;&nbsp;.Net Application</a></li>
+                <li><a data-toggle="tab" href="#sdt"><img src="~/img/service_dep.png" />&nbsp;&nbsp;Java Application</a></li>
+                <li><a data-toggle="tab" href="#php"><img src="~/img/service_dep.png" />&nbsp;&nbsp;Php Application</a></li>
+                <li><a data-toggle="tab" href="#DotNetDependency"><img src="~/img/service_dep.png" />&nbsp;&nbsp;.Net App Dependency</a></li>
+                <li><a data-toggle="tab" href="#javadependency"><img src="~/img/service_dep.png" />&nbsp;&nbsp;Java App Dependency</a></li>
+
+                <li><a data-toggle="tab" href="#Db"><img src="~/img/service_dep.png" />&nbsp;&nbsp;MSSQL Database</a></li>
+                <li><a data-toggle="tab" href="#DbMySql"><img src="~/img/service_dep.png" />&nbsp;&nbsp;My SQL Database</a></li>
+                <li><a data-toggle="tab" href="#OraToPg"><img src="~/img/service_dep.png" />&nbsp;&nbsp;OraToPg Database</a></li>
+
+            </ul>
+            <div class="tab-content dep_tab_cont">
+                <div id="adt" class="tab-pane fade in active">
+                    <div class="panel-body dep_tree" id="row" style="overflow-y:auto;overflow-x:auto">
+
+                        @if (Model.lstApplicationScanXML.Count() > 0)
+                        {
+                            <div class="">
+                                <div class="col-lg-12">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">.Net Application List</h3>
+                                        </div>
+                                        <div class="table-responsive">
+                                            @(Html.Kendo().Grid(Model.lstApplicationScanXML)
+    .Name("projectWiseAppAndDbCount").HtmlAttributes(new { @class = "table table-striped table-bordered" })
+    .Columns(c =>
+    {
+    c.Bound(b => b.ApplicationName);
+    c.Bound(b => b.ProjectName);
+    c.Template(@<span>.Net</span>).Title("Application Platform");
+    c.Bound(b => b.UploadedDate).Title("Scan Date").Format("{0:MM-dd-yyyy}");
+    c.Template(@<span id="span_container_@item.ScanID">@item.ContainerReadiness</span>).Hidden(true);
+    c.Template(@<span id="span_app_service_@item.ScanID">@item.AppServiceReadiness</span>).Hidden(true);
+    c.Template(@<span id="span_vm_@item.ScanID">@item.VMReadiness</span>).Hidden(true);
+    //c.Template(@<span>@(string.IsNullOrEmpty(item.ContainerReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<a href='/AssessmentReport/AssessmentReport?Type=Container&ScanId=" + item.ScanID + "' target='_blank'><div id='container_" + item.ScanID + "' style='width: 100%; height: 40px;'></div></a>")) </span>).Title("Container Readiness");
+    //c.Template(@<span>@(string.IsNullOrEmpty(item.AppServiceReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<a href='/AssessmentReport/AssessmentReport?Type=AppService&ScanId=" + item.ScanID + "' target='_blank'><div id='app_service_" + item.ScanID + "' style='width: 100%; height: 40px;'></div></a>")) </span>).Title("App Service Readiness");
+    //c.Template(@<span>@(string.IsNullOrEmpty(item.VMReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<a href='/AssessmentReport/AssessmentReport?Type=VirtualMachine&ScanId=" + item.ScanID + "' target='_blank'><div id='vm_" + item.ScanID + "' style='width: 100%; height: 40px;'></div></a>")) </span>).Title("Virtual Machine Readiness");
+    c.Template(@<span>@(string.IsNullOrEmpty(item.ContainerReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<div class='progress bar'><div style='background - color: #449d44;title:;text-align: center;line-height: 20px;height: inherit;width:" + item.ContainerReadiness + "%;' class='progress-bar progress-bar-success' role='progressbar'>" + item.ContainerReadiness + "%</div><div style='background-color: #c9302c;text-align: center;line-height: 20px;height: inherit;width:" + (100 - Convert.ToInt32(item.ContainerReadiness)) + "%;' class='progress-bar progress-bar-danger' role='progressbar'>" + (100 - Convert.ToInt32(item.ContainerReadiness)) + "%</div></div>")) </span>).Title("Container Readiness");
+    c.Template(@<span>@(string.IsNullOrEmpty(item.AppServiceReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<div class='progress bar'><div style='background - color: #449d44;title:;text-align: center;line-height: 20px;height: inherit;width:" + item.AppServiceReadiness + "%;' class='progress-bar progress-bar-success' role='progressbar'>" + item.AppServiceReadiness + "%</div><div style='background-color: #c9302c;text-align: center;line-height: 20px;height: inherit;width:" + (100 - Convert.ToInt32(item.AppServiceReadiness)) + "%;' class='progress-bar progress-bar-danger' role='progressbar'>" + (100 - Convert.ToInt32(item.AppServiceReadiness)) + "%</div></div>")) </span>).Title("App Service Readiness");
+    c.Template(@<span>@(string.IsNullOrEmpty(item.VMReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<div class='progress bar'><div style='background - color: #449d44;title:;text-align: center;line-height: 20px;height: inherit;width:" + item.VMReadiness + "%;' class='progress-bar progress-bar-success' role='progressbar'>" + item.VMReadiness + "%</div><div style='background-color: #c9302c;text-align: center;line-height: 20px;height: inherit;width:" + (100 - Convert.ToInt32(item.VMReadiness)) + "%;' class='progress-bar progress-bar-danger' role='progressbar'>" + (100 - Convert.ToInt32(item.VMReadiness)) + "%</div></div>")) </span>).Title("Virtual Machine Readiness");
+    c.Template(@<span> @(item.RecommendationPlateform == null ? "Assessment Pending" : item.RecommendationPlateform )</span>).Title("Recommended Platform");
+    c.Template(@<span class="@(item.AssessmentStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.AssessmentStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "Completed" : "Pending")</span>).Title("Assessment Status");
+    c.Template(@<span class="@(item.MigrationStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.MigrationStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.MigrationStatus == "Completed" ? "Completed" : "Pending" )</span>).Title("Migration Status");
+    c.Template(@<a class="btn btn-xs btn-primary btnViewWidth" href="@(item.AssessmentStatus == "Completed" ? Url.Action("Overview", "AssessmentReport", new { ScanId = item.ScanID, lang = ".Net" }) : Url.Action("AssessmentQuestionScreen", "Details", new { ScanId = item.ScanID, lang = ".Net" }))"><i class="fa fa-eye" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "View" : "Analysis")</a> ).Title("View");
+    })
+                    )
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <div id="sdt" class="tab-pane fade">
+
+                    @if (Model.lstJavaProjectScanXML.Count() > 0)
+                    {
+                        <div class="clearfix" style="margin-bottom:15px;">
+                            <div class="col-lg-12">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Java Application List</h3>
+                                    </div>
+                                    <div class="table-responsive">
+                                        @(Html.Kendo().Grid(Model.lstJavaProjectScanXML)
+    .Name("ApplicationMigrationAssessment")
+    .TableHtmlAttributes(new { @class = "table" })
+    .Columns(c =>
+    {
+    c.Bound(b => b.ApplicationName);
+    c.Bound(b => b.ProjectName);
+    c.Template(@<span>Java</span>).Title("Application Platform");
+    c.Bound(b => b.CreatedDate).Title("Scan Date").Format("{0:MM-dd-yyyy}");
+    c.Template(@<span>@(string.IsNullOrEmpty(item.ContainerReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<div class='progress bar'><div style='background - color: #449d44;title:;text-align: center;line-height: 20px;height: inherit;width:" + item.ContainerReadiness + "%;' class='progress-bar progress-bar-success' role='progressbar'>" + item.ContainerReadiness + "%</div><div style='background-color: #c9302c;text-align: center;line-height: 20px;height: inherit;width:" + (100 - Convert.ToInt32(item.ContainerReadiness)) + "%;' class='progress-bar progress-bar-danger' role='progressbar'>" + (100 - Convert.ToInt32(item.ContainerReadiness)) + "%</div></div>")) </span>).Title("Container Readiness");
+    c.Template(@<span>@(string.IsNullOrEmpty(item.AppServiceReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<div class='progress bar'><div style='background - color: #449d44;title:;text-align: center;line-height: 20px;height: inherit;width:" + item.AppServiceReadiness + "%;' class='progress-bar progress-bar-success' role='progressbar'>" + item.AppServiceReadiness + "%</div><div style='background-color: #c9302c;text-align: center;line-height: 20px;height: inherit;width:" + (100 - Convert.ToInt32(item.AppServiceReadiness)) + "%;' class='progress-bar progress-bar-danger' role='progressbar'>" + (100 - Convert.ToInt32(item.AppServiceReadiness)) + "%</div></div>")) </span>).Title("App Service Readiness");
+    c.Template(@<span>@(string.IsNullOrEmpty(item.VMReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<div class='progress bar'><div style='background - color: #449d44;title:;text-align: center;line-height: 20px;height: inherit;width:" + item.VMReadiness + "%;' class='progress-bar progress-bar-success' role='progressbar'>" + item.VMReadiness + "%</div><div style='background-color: #c9302c;text-align: center;line-height: 20px;height: inherit;width:" + (100 - Convert.ToInt32(item.VMReadiness)) + "%;' class='progress-bar progress-bar-danger' role='progressbar'>" + (100 - Convert.ToInt32(item.VMReadiness)) + "%</div></div>")) </span>).Title("Virtual Machine Readiness");
+    c.Template(@<span> @(item.RecommendationPlateform == null ? "Assessment Pending" : item.RecommendationPlateform )</span>).Title("Recommended Platform");
+    c.Template(@<span class="@(item.AssessmentStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.AssessmentStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "Completed" : "Pending")</span>).Title("Assessment Status");
+    c.Template(@<span class="@(item.MigrationStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.MigrationStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.MigrationStatus == "Completed" ? "Completed" : "Pending" )</span>).Title("Migration Status");
+    c.Template(@<a class="btn btn-xs btn-primary btnViewWidth" target="_blank" href="@(item.AssessmentStatus == "Completed" ? Url.Action("Overview", "JavaAssessmentReport", new { ScanId = item.Id }) : Url.Action("AssessmentQuestionScreen", "Details", new { ScanId = item.Id, lang = "Java" }))"><i class="fa fa-eye" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "View" : "Analysis")</a> ).Title("View");
+    })
+                    )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div id="php" class="tab-pane fade">
+                    @if (Model.lstPhpApplicationScanXML.Count() > 0)
+                    {
+                        <div class="clearfix" style="margin-bottom:15px;">
+                            <div class="col-lg-12">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">PHP Application List</h3>
+                                    </div>
+                                    <div class="table-responsive">
+                                        @(Html.Kendo().Grid(Model.lstPhpApplicationScanXML)
+    .Name("PhpApplicationAssessment")
+    .TableHtmlAttributes(new { @class = "table" })
+    .Columns(c =>
+    {
+    c.Bound(b => b.ApplicationName);
+    c.Bound(b => b.ProjectName);
+    c.Template(@<span>Php</span>).Title("Application Platform");
+    c.Bound(b => b.CreatedDate).Title("Scan Date").Format("{0:MM-dd-yyyy}");
+    c.Template(@<span>@(string.IsNullOrEmpty(item.ContainerReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<div class='progress bar'><div style='background - color: #449d44;title:;text-align: center;line-height: 20px;height: inherit;width:" + item.ContainerReadiness + "%;' class='progress-bar progress-bar-success' role='progressbar'>" + item.ContainerReadiness + "%</div><div style='background-color: #c9302c;text-align: center;line-height: 20px;height: inherit;width:" + (100 - Convert.ToInt32(item.ContainerReadiness)) + "%;' class='progress-bar progress-bar-danger' role='progressbar'>" + (100 - Convert.ToInt32(item.ContainerReadiness)) + "%</div></div>")) </span>).Title("Container Readiness");
+    c.Template(@<span>@(string.IsNullOrEmpty(item.AppServiceReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<div class='progress bar'><div style='background - color: #449d44;title:;text-align: center;line-height: 20px;height: inherit;width:" + item.AppServiceReadiness + "%;' class='progress-bar progress-bar-success' role='progressbar'>" + item.AppServiceReadiness + "%</div><div style='background-color: #c9302c;text-align: center;line-height: 20px;height: inherit;width:" + (100 - Convert.ToInt32(item.AppServiceReadiness)) + "%;' class='progress-bar progress-bar-danger' role='progressbar'>" + (100 - Convert.ToInt32(item.AppServiceReadiness)) + "%</div></div>")) </span>).Title("App Service Readiness");
+    c.Template(@<span>@(string.IsNullOrEmpty(item.VMReadiness) ? Html.Raw("<span>Assessment Pending</span>") : Html.Raw("<div class='progress bar'><div style='background - color: #449d44;title:;text-align: center;line-height: 20px;height: inherit;width:" + item.VMReadiness + "%;' class='progress-bar progress-bar-success' role='progressbar'>" + item.VMReadiness + "%</div><div style='background-color: #c9302c;text-align: center;line-height: 20px;height: inherit;width:" + (100 - Convert.ToInt32(item.VMReadiness)) + "%;' class='progress-bar progress-bar-danger' role='progressbar'>" + (100 - Convert.ToInt32(item.VMReadiness)) + "%</div></div>")) </span>).Title("Virtual Machine Readiness");
+    c.Template(@<span> @(item.RecommendationPlateform == null ? "Assessment Pending" : item.RecommendationPlateform )</span>).Title("Recommended Platform");
+    c.Template(@<span class="@(item.AssessmentStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.AssessmentStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "Completed" : "Pending")</span>).Title("Assessment Status");
+    c.Template(@<span class="@(item.MigrationStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.MigrationStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.MigrationStatus == "Completed" ? "Completed" : "Pending" )</span>).Title("Migration Status");
+    c.Template(@<a class="btn btn-xs btn-primary btnViewWidth" target="_blank" href="@(item.AssessmentStatus == "Completed" ? Url.Action("Overview", "PhpAssessmentReport", new { ScanId = item.Id }) : Url.Action("AssessmentQuestionScreen", "Details", new { ScanId = item.Id, lang = "Php" }))"><i class="fa fa-eye" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "View" : "Analysis")</a> ).Title("View");
+    })
+                    )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div id="DotNetDependency" class="tab-pane fade">
+
+                    @if (Model.lstAppDependencyScanXML.Count() > 0)
+                    {
+                        <div class="clearfix">
+                            <div class="col-lg-12">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">.Net Application Dependency List</h3>
+                                    </div>
+                                    <div class="table-responsive">
+                                        @(Html.Kendo().Grid(Model.lstAppDependencyScanXML)
+    .Name("ApplicationMigrationAssessment")
+    .TableHtmlAttributes(new { @class = "table" })
+    .Columns(c =>
+    {
+    c.Bound(b => b.ApplicationName);
+    c.Bound(b => b.ProjectName).Hidden(true);
+    c.Template(@<span>.Net</span>).Title("Application Platform");
+    c.Bound(b => b.ProjectName);
+    c.Bound(b => b.UploadedDate).Title("Scan Date").Format("{0:MM-dd-yyyy}");
+    c.Template(@<span id="span_container_@item.ScanID">@item.ContainerReadiness</span>).Hidden(true);
+    c.Template(@<span id="span_app_service_@item.ScanID">@item.AppServiceReadiness</span>).Hidden(true);
+    c.Template(@<span id="span_vm_@item.ScanID">@item.VMReadiness</span>).Hidden(true);
+    c.Template(@<span> @(item.RecommendationPlateform == null ? "Assessment Pending" : item.RecommendationPlateform )</span>).Title("Recommended Platform").Hidden(true);
+    c.Template(@<span class="@(item.AssessmentStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.AssessmentStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "Completed" : "Pending")</span>).Title("Assessment Status");
+    c.Template(@<span class="@(item.MigrationStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.MigrationStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.MigrationStatus == "Completed" ? "Completed" : "Pending" )</span>).Title("Migration Status");
+    c.Template(@<a class="btn btn-xs btn-primary btnViewWidth" target="_blank" href="@(Url.Action("Overview", "AssessmentReport", new { ScanId = item.ScanID, DependencyScanId = item.DependencyScanID, lang = ".Net" }) )"><i class="fa fa-eye" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "View" : "Analysis")</a> ).Title("View");
+    })
+                    )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div id="javadependency" class="tab-pane fade">
+
+                    @if (Model.lstJavaDependencyScanXML.Count() > 0)
+                    {
+                        <div class="clearfix" style="margin-bottom:15px;">
+                            <div class="col-lg-12">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Java Application Dependency List</h3>
+                                    </div>
+                                    <div class="table-responsive">
+                                        @(Html.Kendo().Grid(Model.lstJavaDependencyScanXML)
+                     .Name("ApplicationMigrationAssessment")
+                     .TableHtmlAttributes(new { @class = "table" })
+                     .Columns(c =>
+                     {
+                     c.Bound(b => b.ApplicationName);
+                     c.Template(@<span>Java</span>).Title("Application Platform");
+                     c.Bound(b => b.ProjectName);
+                     c.Bound(b => b.CreatedDate).Title("Scan Date").Format("{0:MM-dd-yyyy}");
+                     c.Template(@<span class="@(item.AssessmentStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.AssessmentStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "Completed" : "Pending")</span>).Title("Assessment Status");
+                     c.Template(@<span class="@(item.MigrationStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.MigrationStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.MigrationStatus == "Completed" ? "Completed" : "Pending" )</span>).Title("Migration Status");
+                     c.Template(@<a class="btn btn-xs btn-primary btnViewWidth" target="_blank" href="@(Url.Action("Overview", "JavaAssessmentReport", new { ScanId = item.ScanID, DependencyScanId = item.Id, lang = "Java" }))"><i class="fa fa-eye" aria-hidden="true"></i> @(item.IsProcessed == true ? "View" : "Analysis")</a> ).Title("View");
+
+                     })
+                    )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div id="Db" class="tab-pane fade">
+
+                    @if (Model.lstDbScanXML.Count() > 0)
+                    {
+                        <div class="clearfix">
+                            <div class="col-lg-12">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">MSSQL Database List</h3>
+                                    </div>
+                                    <div class="table-responsive">
+                                        @(Html.Kendo().Grid(Model.lstDbScanXML)
+                           .Name("DatabaseMigrationAssessment").HtmlAttributes(new { @class = "table table-striped table-bordered" })
+                           .Columns(c =>
+                           {
+                               c.Bound(b => b.DatabaseName);
+                               c.Bound(b => b.ProjectName);
+                               c.Bound(b => b.UploadedDate).Title("Scan Date").Format("{0:MM-dd-yyyy}");
+                               c.Template(@<span class="@(item.AssessmentStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.AssessmentStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "Completed" : "Pending")</span>).Title("Assessment Status");
+                            c.Template(@<span class="@(item.MigrationStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.MigrationStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.MigrationStatus == "Completed" ? "Completed" : "Pending" )</span>).Title("Migration Status");
+                            c.Template(@<a class="btn btn-xs btn-primary btnViewWidth" target="_blank" href="@Url.Action("Overview", "DbAssessment", new { DataBaseScanId = item.DatabaseScanID, DBType = "MSSQL" })"><i class="fa fa-eye" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "View" : "Analysis")</a> ).Title("View");
+                        })
+                        )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div id="DbMySql" class="tab-pane fade">
+
+                    @if (Model.lstMySQLScanXML.Count() > 0)
+                    {
+                        <div class="clearfix">
+                            <div class="col-lg-12">
+                                <div class="panel panel-primary" style="margin-bottom: 50px;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">MySQL Database List</h3>
+                                    </div>
+                                    <div class="table-responsive">
+                                        @(Html.Kendo().Grid(Model.lstMySQLScanXML)
+                             .Name("DatabaseMigrationAssessment").HtmlAttributes(new { @class = "table table-striped table-bordered" })
+                             .Columns(c =>
+                             {
+                                 c.Bound(b => b.DatabaseName);
+                                 c.Bound(b => b.ProjectName);
+                                 c.Bound(b => b.UploadedDate).Title("Scan Date").Format("{0:MM-dd-yyyy}");
+                                 c.Template(@<span class="@(item.AssessmentStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.AssessmentStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "Completed" : "Pending")</span>).Title("Assessment Status");
+                                c.Template(@<span class="@(item.MigrationStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.MigrationStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.MigrationStatus == "Completed" ? "Completed" : "Pending" )</span>).Title("Migration Status");
+                                c.Template(@<a class="btn btn-xs btn-primary btnViewWidth" target="_blank" href="@Url.Action("Overview", "DbAssessment", new { DataBaseScanId = item.DatabaseScanId, DBType = "MySQL" })"><i class="fa fa-eye" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "View" : "Analysis")</a> ).Title("View");
+                            })
+                        )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div id="OraToPg" class="tab-pane fade">
+
+                    @if (Model.lstOraToPgScanDetails != null)
+                    {
+                        if (Model.lstOraToPgScanDetails.Count() > 0)
+                        {
+                            <div class="clearfix">
+                                <div class="col-lg-12">
+                                    <div class="panel panel-primary" style="margin-bottom: 50px;">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">OraToPg Database List</h3>
+                                        </div>
+                                        <div class="table-responsive">
+                                            @(Html.Kendo().Grid(Model.lstOraToPgScanDetails)
+                     .Name("DatabaseMigrationAssessment").HtmlAttributes(new { @class = "table table-striped table-bordered" })
+                     .Columns(c =>
+                     {
+                     c.Bound(b => b.DatabaseName);
+                     c.Bound(b => b.ProjectName);
+                     c.Bound(b => b.UploadedDate).Title("Scan Date").Format("{0:MM-dd-yyyy}");
+                     c.Template(@<span class="@(item.AssessmentStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.AssessmentStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "Completed" : "Pending")</span>).Title("Assessment Status");
+                     c.Template(@<span class="@(item.MigrationStatus == "Completed" ? "text-success" : "text-danger")"><i class="fa fa-@(item.MigrationStatus == "Completed" ? "check-circle" : "exclamation-triangle")" aria-hidden="true"></i> @(item.MigrationStatus == "Completed" ? "Completed" : "Pending" )</span>).Title("Migration Status");
+                     c.Template(@<a class="btn btn-xs btn-primary btnViewWidth" target="_blank" href="@Url.Action("Overview", "OraToPgReport", new { DataBaseScanId = item.DatabaseScanID, DBType = "Oracle" })"><i class="fa fa-eye" aria-hidden="true"></i> @(item.AssessmentStatus == "Completed" ? "View" : "Analysis")</a> ).Title("View");
+                     })
+                        )
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            </div>
+    </div>*@
+<style>
+
+
+    #prjct_list_header span {
+        margin-top: 7px !important;
+        margin-right: 7px;
+    }
+
+        #prjct_list_header span input {
+            height: 30px;
+        }
+
+    .dep_tabs li {
+        margin-bottom: -1px;
+        margin-right: 6px;
+        border-bottom: 0px;
+    }
+
+        .dep_tabs li a {
+            background: #e5ecf3;
+            padding: 8px 20px;
+            border-radius: 5px 5px 0 0;
+            border: 1px solid #ddd;
+            border-bottom: 0px !important;
+            font-size: 14px;
+        }
+
+            .dep_tabs li a:hover {
+                border: 1px solid #ddd;
+                color: #333;
+            }
+
+            .dep_tabs li a:after {
+                display: none;
+            }
+
+        .dep_tabs li.active a {
+            background: #fff !important;
+            color: #1f6fb3;
+            border: 1px solid #ddd;
+        }
+
+            .dep_tabs li.active a:hover, .dep_tabs li.active a:focus {
+                color: #1f6fb3;
+                border: 1px solid #ddd;
+            }
+
+    .dep_tab_cont {
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 0px;
+    }
+
+    .service_dep_cont {
+        height: calc(100vh - 240px);
+        position: relative;
+    }
+
+        .service_dep_cont img {
+            position: absolute;
+            left: 50px;
+            top: 50%;
+            transform: translate(0,-50%);
+        }
+
+    .service_dep_detail {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        width: 260px;
+        bottom: 0px;
+        padding: 5px;
+        border: 1px solid #ddd;
+        background: #eef4f9;
+    }
+
+        .service_dep_detail h4 {
+            background: #1f6fb3;
+            color: white;
+            font-weight: 500;
+            font-size: 15px;
+            text-align: left;
+            margin: 0 0 10px 0;
+            padding: 10px;
+        }
+
+        .service_dep_detail ul {
+            padding: 0 0 0 0;
+            list-style: none outside;
+        }
+
+            .service_dep_detail ul li {
+                margin: 0 0 8px 0;
+                color: #333;
+                font-size: 14px;
+                padding: 5px 10px;
+            }
+
+                .service_dep_detail ul li img {
+                    max-width: 26px;
+                    max-height: 18px;
+                    margin: 0px 10px 0 0;
+                    display: inline-block;
+                    position: inherit;
+                    transform: unset;
+                }
+
+    .links line {
+        stroke: #646866;
+        stroke-opacity: 0.6;
+    }
+</style>
+
+
+@if ((string.IsNullOrEmpty(ViewBag.Status) && string.IsNullOrEmpty(ViewBag.Filter)) && ViewBag.Type == "App")
+{
+    @Html.Partial("_PartialApplicationMigrationGrid", Model);
+}
+@if ((string.IsNullOrEmpty(ViewBag.Status) && string.IsNullOrEmpty(ViewBag.Filter)) && ViewBag.Type == "Db")
+{
+    @Html.Partial("_PartialDatabaseMigrationGrid", Model);
+}
+@if ((!string.IsNullOrEmpty(ViewBag.Status) && !string.IsNullOrEmpty(ViewBag.Filter)) && ViewBag.Type == "App")
+{
+    @Html.Partial("_PartialApplicationMigrationGrid", Model);
+}
+
+@* Done by Mayank Pal*@ @*Starts Here*@
+@if ((!string.IsNullOrEmpty(ViewBag.Status) && !string.IsNullOrEmpty(ViewBag.Filter)) && ViewBag.Type == "App")
+    {
+        @Html.Partial("_PartialAppDependencyGrid", Model);
+    }
+@*Ends Here*@
+
+@if ((!string.IsNullOrEmpty(ViewBag.Status) && !string.IsNullOrEmpty(ViewBag.Filter)) && ViewBag.Type == "Db")
+{
+    @Html.Partial("_PartialDatabaseMigrationGrid", Model);
+}
+@if (string.IsNullOrEmpty(ViewBag.Type))
+{
+    @Html.Partial("_PartialApplicationMigrationGrid", Model);
+}
+@if (string.IsNullOrEmpty(ViewBag.Type))
+{
+    @Html.Partial("_PartialAppDependencyGrid", Model);
+}
+@if (string.IsNullOrEmpty(ViewBag.Type))
+{
+    @Html.Partial("_PartialDatabaseMigrationGrid", Model);
+}
+@section JSForThisPage
+{
+    <script>
+        $(function () {
+            Grid_DataBound();
+
+            var divIds = [];
+            var pendingStatus = [];
+            var result = [];
+            $("#projectWiseAppAndDbCount").find('div[class=appRepeater]').each(function (i) {
+                var divId = $("#projectWiseAppAndDbCount").find('div[class=appRepeater]')[i].id;
+                var index = divId.indexOf("_");
+                var penStatus = divId.charAt(index - 1);
+                divIds.push([divId, parseInt(penStatus)]);
+                pendingStatus.push(parseInt(penStatus));
+            });
+            pendingStatus.sort();
+            pendingStatus.reverse();
+
+            pendingStatus.forEach(function (key) {
+                var found = false;
+                divIds = divIds.filter(function (item) {
+                    if (!found && item[1] == key) {
+                        result.push(item);
+                        found = true;
+                        return false;
+                    } else
+                        return true;
+                });
+            });
+
+            for (var j = 0; j < result.length; j++) {
+                if (j === 0) {
+                    $("#" + result[j][0]).insertAfter("#divGridGroup");
+                } else {
+                    $("#" + result[j][0]).insertAfter("#" + result[j - 1][0]);
+                }
+            }
+        });
+
+        function Grid_DataBound() {
+            $("#projectWiseAppAndDbCount").find('table tbody td div[id]').each(function (i) {
+                var id = $("#projectWiseAppAndDbCount").find('table tbody td div[id]')[i].id;
+                var ready = parseFloat($("#span_" + id).text());
+                var notReady = parseFloat((100 - ready));
+                $("#" + id).kendoChart({
+                    theme: "Material",
+                    chartArea: {
+                        background: "transparent",
+                    },
+                    seriesDefaults: {
+                        type: "bar",
+                        stack: true,
+                        labels: {
+                            visible: true,
+                            position: "top",
+                            background: "transparent",
+                            template: "#= value==0?'':value##=value!=0?'%':''#",
+                            color: "white"
+                        },
+                        gap: 1
+                    },
+                    legend: {
+                        visible: false
+                    },
+                    series: [{
+                        name: "Ready",
+                        data: [ready],
+                        color: "#449d44"
+                    }, {
+                        name: "Not Ready",
+                        data: [notReady],
+                        color: "#c9302c"
+                    }],
+                    valueAxis: {
+                        min: 0,
+                        max: 100,
+                        labels: {
+                            format: "{0}"
+                        },
+                        line: {
+                            visible: false
+                        },
+                        majorGridLines: {
+                            visible: false
+                        },
+                        visible: false
+                    },
+                    categoryAxis: {
+                        categories: '',
+                        majorGridLines: {
+                            visible: false
+                        },
+                        labels: {
+                            rotation: "auto"
+                        },
+                        visible: false
+                    },
+                    tooltip: {
+                        visible: true,
+                        format: "{0}",
+                        template: "#= series.name #: #= value #%"
+                    }
+                });
+            });
+        }
+        $(document).on("click", ".appRepeater", function () {
+            var divId = $(this).attr('id');
+            if ($("#" + divId).find("div[class='col-lg-12 col-md-12 col-sm-12 subheading collapsed']").length == 1) {
+                $("#" + divId).find('div span.fa').removeClass('down');
+            } else {
+                $("#" + divId).find('div span.fa').addClass('down');
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#prjct_list_header h3").html("Details");
+        });
+    </script>
+}

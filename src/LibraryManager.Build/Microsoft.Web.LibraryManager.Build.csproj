@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PackageTags>library, package, client-side, build</PackageTags>
+    <Description>MSBuild target for the Visual Studio Library Manager</Description>
+    <PackageId>Microsoft.Web.LibraryManager.Build</PackageId>
+    <Title>$(PackageId)</Title>
+    <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <NoWarn>NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.Build.Tasks.Core" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="all"/>
+    <PackageReference Include="System.Runtime.Loader" Condition="'$(TargetFramework)' == 'netstandard2.0'"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Microsoft.Web.LibraryManager.Build.props">
+      <PackagePath>build</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="Microsoft.Web.LibraryManager.Build.targets">
+      <Pack>true</Pack>
+      <PackagePath>build</PackagePath>
+    </Content>
+    <Content Include="Third-party-notice.txt">
+      <Pack>true</Pack>
+      <PackagePath></PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LibraryManager\Microsoft.Web.LibraryManager.csproj" PrivateAssets="all" />
+  </ItemGroup>
+
+  <Target Name="AddAdditionalFilesToSign" AfterTargets="CollectFilesToSign">
+    <ItemGroup>
+      <!-- Sign 3rd party assemblies -->
+      <FilesToSign Include="$(OutputPath)\Minimatch.dll">
+        <Authenticode>3PartySHA2</Authenticode>
+      </FilesToSign>
+      <FilesToSign Include="$(OutputPath)\Newtonsoft.Json.dll">
+        <Authenticode>3PartySHA2</Authenticode>
+      </FilesToSign>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
+    <!--
+        The include needs to happen after output has been copied to build output folder
+        but before NuGet generates a nuspec. See https://github.com/NuGet/Home/issues/4704.
+        -->
+    <ItemGroup>
+      <_PackageFiles Include="$(OutputPath)\**\Microsoft.Web.LibraryManager*.dll;$(OutputPath)\**\Minimatch.dll;$(OutputPath)\**\Newtonsoft.Json.dll"
+                     Exclude="$(OutputPath)\**\Microsoft.Web.LibraryManager.Build.dll">
+        <PackagePath>tools\%(RecursiveDir)</PackagePath>
+        <Visible>false</Visible>
+        <BuildAction>Content</BuildAction>
+      </_PackageFiles>
+    </ItemGroup>
+  </Target>
+
+</Project>

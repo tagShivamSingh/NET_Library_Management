@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+        <PackageTags>mocks, unit test, library, client-side, package</PackageTags>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <Authors>Microsoft</Authors>
+        <Company>Microsoft Corp.</Company>
+        <Description>A collection of mocks for unit testing custom Library Manager extensions</Description>
+        <Copyright>Copyright © Microsoft</Copyright>
+        <Version>1.0.0-alpha</Version>
+        <PackageId>Microsoft.Web.LibraryManager.Mocks</PackageId>
+        <PackageIconUrl>https://aka.ms/vsextensibilityicon</PackageIconUrl>
+        <PackageProjectUrl>https://github.com/aspnet/LibraryManager</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/aspnet/LibraryManager</RepositoryUrl>
+        <PackageOutputPath>..\..\artifacts\$(Configuration)</PackageOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="CacheService.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\LibraryManager.Contracts\Microsoft.Web.LibraryManager.Contracts.csproj" />
+    </ItemGroup>
+
+</Project>

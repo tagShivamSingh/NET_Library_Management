@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+      <Compile Remove="FileHelperTest.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove=".editorconfig" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Moq" />
+        <PackageReference Include="MSTest.TestAdapter" />
+        <PackageReference Include="MSTest.TestFramework" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\LibraryManager\Microsoft.Web.LibraryManager.csproj" />
+        <ProjectReference Include="..\LibraryManager.Mocks\Microsoft.Web.LibraryManager.Mocks.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+    </ItemGroup>
+</Project>
